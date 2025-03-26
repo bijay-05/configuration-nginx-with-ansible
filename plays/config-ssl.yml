@@ -1,0 +1,79 @@
+- name: Configure Nginx with Self-Signed SSL and HTTP to HTTPS Redirect
+  become: true
+  vars:
+    ssl_cert_base_path: "/etc/ssl/certs/"
+    ssl_key_base_path: "/etc/ssl/private/"
+    custom_hostname: "testvm"
+  block:
+    - name: Create directories for SSL key and certificate
+      file:
+        path: "{{ item }}"
+        state: directory
+      loop:
+        - "{{ ssl_cert_base_path }}"
+        - "{{ ssl_key_base_path }}"
+
+    - name: Generate OpenSSL private key
+      openssl_privatekey:
+        path: "{{ ssl_key_base_path }}{{ custom_hostname }}.key"
+
+    - name: Generate a Self Signed OpenSSL certificate
+      openssl_certificate:
+        path: "{{ ssl_cert_base_path }}{{ custom_hostname }}.crt"
+        privatekey_path: "{{ ssl_key_base_path }}{{ custom_hostname }}.key"
+        provider: selfsigned
+        selfsigned_digest: sha256
+        selfsigned_not_before: -1d
+        selfsigned_not_after: +365d
+
+    - name: Clear the default Nginx configuration
+      replace:
+        path: /etc/nginx/sites-available/default
+        regexp: "(.*)"
+        replace: ""
+:
+    - name: Configure Nginx to use SSL and HTTP to HTTPS Redirect
+      blockinfile:
+        path: /etc/nginx/sites-available/default
+        block: |
+          server {
+            listen 80;
+            listen [::]:80;
+            server_name <PUBLIC_IP_ADDRESS>;
+
+            location / {
+              return 301 https://$host$request_uri;
+            }
+          }
+
+          server {
+            listen 443 ssl;
+            listen [::]:443 ssl;
+            server_name <PUBLIC_IP_ADDRESS>;
+
+            ssl_certificate {{ ssl_cert_base_path }}{{ custom_hostname }}.crt;
+            ssl_certificate_key {{ ssl_key_base_path }}{{ custom_hostname }}.key;
+
+            location / {
+              root /var/www/html;
+              index index.html index.htm;
+            }
+            
+            location /page1 {
+              alias /var/www/task1/;
+              index index.html;
+              try_files $uri $uri/ =404;
+            }
+
+            location /page2 {
+              alias /var/www/task2/;
+              index index.html;
+              try_files $uri $uri/ /task2/index.html;
+            }
+          }
+    
+    - name: Ensure Nginx is enabled and running
+      systemd:
+        name: nginx
+        enabled: yes
+        state: restarted
