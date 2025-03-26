@@ -98,6 +98,8 @@ Now, I created new SSH public and private key pair. For adding the public key to
 $ ansible-playbook -i inventory.ini playbook.yml
 ```
 
+> While running above command, Ansible threw error: missing modules or misspelling for several modules related to openssl and ssh. I installed modules with `ansible-galaxy collection install community.crypto ansible.posix` and everything worked fine.
+
 ![](images/ansible-playbook-success-part2.png)
 
 
