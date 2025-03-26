@@ -1,0 +1,8 @@
+- hosts: myhosts
+  become: true
+  tasks:
+    - import_tasks: plays/system-update.yml
+    - import_tasks: plays/install-nginx.yml
+    - import_tasks: plays/setup-websites.yml
+    - import_tasks: plays/config-ssl.yml
+    - import_tasks: plays/ssh.yml
