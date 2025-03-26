@@ -1,0 +1,20 @@
+- name: Add new public SSH key
+  become: true
+  vars:
+    username: "adminuser"
+    ssh_key_path: "./new_key.pub"
+
+  block:
+    - name: Set up .ssh directory for the user
+      file:
+        path: "/home/{{ username }}/.ssh"
+        state: directory
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        mode: "0700"
+
+    - name: Add authorized key
+      authorized_key:
+        user: "{{ username }}"
+        state: present
+        key: "{{ lookup('file', ssh_key_path) }}"
