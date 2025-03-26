@@ -1,0 +1,19 @@
+- name: Setup files for Websites
+  become: true
+  vars:
+    websites:
+      - name: "task1"
+        src: "files/task1/index.html"
+      - name: "task2"
+        src: "files/task2/index.html"
+  block:
+    - name: Create directories for websites
+      file:
+        path: "/var/www/{{ item.name }}"
+        state: directory
+      loop: "{{  websites }}"
+    - name: Copy website files to the directories
+      copy: 
+        src: "{{ item.src }}"
+        dest: "/var/www/{{ item.name }}/index.html"
+      loop: "{{  websites }}"
