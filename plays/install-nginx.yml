@@ -1,0 +1,3 @@
+- name: Install Nginx
+  shell:
+    cmd: apt-get install git && git clone https://github.com/bijay-05/react-app-deployment-github-runner.git && bash react-app-deployment-github-runner/install-nginx.sh
