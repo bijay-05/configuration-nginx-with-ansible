@@ -111,7 +111,7 @@ $ ansible-playbook -i inventory.ini playbook.yml
 ![](images/website-2-live.png)
 
 
-> I faced one major issue while viewing the website. The `/etc/nginx/sites-available/default` file configured by Ansible was not included in main `nginx.conf` file. So I had to manually enter the line `include /etc/nginx/sites-available/*;` in `nginx.conf` file. After that I checked nginx configuration with `sudo nginx -t` and reloaded the nginx service. After that everything worked fine.
+> I faced one major issue while viewing the website. The `/etc/nginx/sites-available/default` file configured by Ansible was not included in main `nginx.conf` file. So I had to manually enter the line `include /etc/nginx/sites-available/*;` in `nginx.conf` file. After that I checked nginx configuration with `sudo nginx -t` and reloaded the nginx service. After that everything worked fine. Actually, this issue was caused because I was installing and configuring the nginx using `install-nginx.sh` script from task 1. I have updated the bash script in task 1 as well.
 
 
 ## SSH with new_key
