@@ -27,7 +27,7 @@ $ ansible myhosts -m ping -i inventory.ini
 Ansible playbook is a collection of plays, where each play consists of multiple tasks for configuring the systems.
 Task is a reference to a single module that defines the operations that Ansible performs, and module is a unit of code or binary that Ansible runs on managed nodes.
 
-> ![Important]
+> [!Important]
 > Here we have tasks in each play (inside `plays/` directory).We import these plays into main `playbook.yml` file and run with Ansible.
 
 ### Update the systems (`system-update.yml` play)
@@ -99,7 +99,7 @@ Now, I created new SSH public and private key pair. For adding the public key to
 $ ansible-playbook -i inventory.ini playbook.yml
 ```
 
-> ![Caution]
+> [!Caution]
 > While running above command, Ansible threw **error: missing modules or misspelling for several modules related to openssl and ssh**. I installed modules with `ansible-galaxy collection install community.crypto ansible.posix` and everything worked fine.
 
 ![](images/ansible-playbook-success-part2.png)
@@ -113,7 +113,7 @@ $ ansible-playbook -i inventory.ini playbook.yml
 ![](images/website-2-live.png)
 
 
-> ![Caution]
+> [!Caution]
 > I faced one major issue while viewing the website. The `/etc/nginx/sites-available/default` file configured by Ansible was not included in main `nginx.conf` file. So I had to manually enter the line `include /etc/nginx/sites-available/*;` in `nginx.conf` file. After that I checked nginx configuration with `sudo nginx -t` and reloaded the nginx service. After that everything worked fine. Actually, this issue was caused because I was installing and configuring the nginx using `install-nginx.sh` script from task 1. I have updated the bash script in task 1 as well.
 
 
